@@ -1,0 +1,46 @@
+```{r knitsetup, echo=FALSE, results='hide', warning=FALSE, message=FALSE, cache=FALSE}
+opts_knit$set(base.dir='./', fig.path='', out.format='md')
+opts_chunk$set(prompt=FALSE, comment='', results='markup')
+# See yihui.name/knitr/options for more Knitr options.
+##### Put other setup R code here
+
+
+# end setup chunk
+```
+
+### 1.2. aggregating our data
+
+Suppose we wanted to calculate the average price of the diamonds for each level of ```cut```, i.e. the average price for all diamonds of "Ideal" quality, for all diamonds of "Premium" quality and so on, this would be done like this
+
+```{r aggregate price cut, tidy = FALSE}
+ave_price_cut <- aggregate(diamonds$price, by = list(diamonds$cut), 
+                           FUN = mean)
+### by = ... needs a list, even if there is only one entry
+```
+
+and will look like this
+
+```{r show table, tidy = FALSE}
+ave_price_cut
+```
+
+Note, that the original column names are not carried over to the newly created table of averaged values. Instead these get the generic names ```Group.1``` and ```x```
+
+The ```Group.1``` already indicates that we are not limited to aggregate just over one factorial variable, more are also possible. Furthermore, any  function to compute the summary statistics which can be applied to all data subsets is allowed, e.g. to compute the number of items per category we could use ```length```
+
+```{r aggregate price cut + color, tidy = FALSE}
+ave_n_cut_color <- aggregate(diamonds$price, 
+                             by = list(diamonds$cut,
+                                       diamonds$color), 
+                             FUN = length)
+ave_n_cut_color
+```
+
+Given that as a result of aggregating this way we loose our variable names, it makes sense to set them afterwards, so that we can easily refer to them later
+
+```{r set names, tidy = FALSE}
+names(ave_n_cut_color) <- c("cut", "color", "n")
+str(ave_n_cut_color)
+```
+
+So, I hope you see how useful ```aggregate()``` is for calculating summary statistics of your data.
