@@ -1,0 +1,3 @@
+this gitbook was built using the fork from:
+
+devtools::install_github("raulossada/Rgitbook")
