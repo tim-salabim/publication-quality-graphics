@@ -1,0 +1,71 @@
+```{r knitsetup, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+source('../../global_options.R')
+opts_knit$set(base.dir='./', out.format='md')
+opts_chunk$set(prompt=FALSE, comment='', results='markup', cache = cch, cache.path = '../../book_cache/', fig.path = '../../book_figures/', fig.align = 'center')
+
+
+knit_hooks$set(plot = function(x, options) {
+  paste('<figure><img src="',
+        opts_knit$get('base.url'), paste(x, collapse = '.'),
+        '"><figcaption>', options$fig.cap, '</figcaption></figure>',
+        sep = '')
+})
+
+fn = local({
+  i = 0
+  function(x) {
+    i <<- i + 1
+    paste('Figure ', i, ': ', x, sep = '')
+  }
+})
+# See yihui.name/knitr/options for more Knitr options.
+##### Put other setup R code here
+
+
+# end setup chunk
+```
+
+### 1.3. Sorting our data
+
+```{r global settings, tidy = FALSE, message = FALSE, results = 'hide'}
+### here's a rather handy way of loading all packages that you need
+### for your code to work in one go
+libs <- c('ggplot2', 'latticeExtra', 'gridExtra', 'MASS', 
+          'colorspace', 'plyr', 'Hmisc', 'scales')
+lapply(libs, require, character.only = T)
+```
+
+```{r load, tidy = FALSE, message = FALSE, results = 'asis'}
+### load the diamonds data set (comes with ggplot2)
+data(diamonds)
+
+ave_n_cut_color <- aggregate(diamonds$price, 
+                             by = list(diamonds$cut,
+                                       diamonds$color), 
+                             FUN = length)
+names(ave_n_cut_color) <- c("cut", "color", "n")
+```
+
+Sorting our data according to one (or more) of the variables in our data can also be very handy.   
+Sorting of a vector can be achieved using ```sort()```
+
+```{r sort vector, tidy = FALSE}
+sort(ave_n_cut_color$n)
+```
+
+sorting of an entire dataframe is done using ```order()``` as follows
+
+* for sorting according to one variable
+
+```{r sort df, tidy = FALSE}
+ave_n_cut_color <- ave_n_cut_color[order(ave_n_cut_color$cut), ]
+ave_n_cut_color
+```
+
+* for sorting according to two variables
+
+```{r sort df2, tidy = FALSE}
+ave_n_cut_color <- ave_n_cut_color[order(ave_n_cut_color$cut,
+                                         ave_n_cut_color$n), ]
+ave_n_cut_color
+```

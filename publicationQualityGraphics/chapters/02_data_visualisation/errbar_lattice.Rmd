@@ -1,0 +1,61 @@
+```{r knitsetup, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+source('../../global_options.R')
+opts_knit$set(base.dir='./', out.format='md')
+opts_chunk$set(prompt=FALSE, comment='', results='markup', cache = cch, cache.path = '../../book_cache/', fig.path = '../../book_figures/', fig.align = 'center')
+
+
+knit_hooks$set(plot = function(x, options) {
+  paste('<figure><img src="',
+        opts_knit$get('base.url'), paste(x, collapse = '.'),
+        '"><figcaption>', options$fig.cap, '</figcaption></figure>',
+        sep = '')
+})
+
+fn = local({
+  i = 0
+  function(x) {
+    i <<- i + 1
+    paste('Figure ', i, ': ', x, sep = '')
+  }
+})
+# See yihui.name/knitr/options for more Knitr options.
+##### Put other setup R code here
+clrs_hcl <- function(n) {
+  hcl(h = seq(230, 0, length.out = n), 
+      c = 60, l = seq(10, 90, length.out = n), 
+      fixup = TRUE)
+  }
+
+my_theme <- trellis.par.get()
+my_theme$strip.background$col <- "grey80"
+my_theme$plot.symbol$pch <- 16
+my_theme$plot.symbol$col <- "grey60"
+my_theme$plot.polygon$col <- "grey90"
+# end setup chunk
+```
+
+### 2.7. Plotting error bars (lattice way)
+
+Honestly, ```lattice``` sucks at plotting error bars... Therefore, we will only explore one way of achieving this. In case you really want to explore this further, I refer you to Stackoverflow and other R related forums/lists, wehere you will find a solution, but I doubt that you will like it... Error bars are much easier plotted using ```ggplot2```.
+
+```{r latt err, tidy = FALSE, fig.cap = fn("a basic dotplot with error bars produced with lattice"), fig.align = 'center'}
+my_theme$dot.symbol$col <- "black"
+my_theme$dot.symbol$cex <- 1.5
+my_theme$plot.line$col <- "black"
+my_theme$plot.line$lwd <- 1.5
+
+dmod <- lm(price ~ cut, data = diamonds)
+cuts <- data.frame(cut = unique(diamonds$cut), 
+                   predict(dmod, data.frame(cut = unique(diamonds$cut)), 
+                           se = TRUE)[c("fit", "se.fit")])
+
+errbar_lattice <- Hmisc::Dotplot(cut ~ Cbind(fit, 
+                                             fit + se.fit, 
+                                             fit - se.fit),
+                                 data = cuts, 
+                                 par.settings = my_theme)
+
+l_err <- errbar_lattice
+
+print(l_err)
+```

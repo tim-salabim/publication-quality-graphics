@@ -1,0 +1,84 @@
+```{r knitsetup, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+source('../../global_options.R')
+opts_knit$set(base.dir='./', out.format='md')
+opts_chunk$set(prompt=FALSE, comment='', results='markup', cache = cch, cache.path = '../../book_cache/', fig.path = '../../book_figures/', fig.align = 'center')
+
+
+knit_hooks$set(plot = function(x, options) {
+  paste('<figure><img src="',
+        opts_knit$get('base.url'), paste(x, collapse = '.'),
+        '"><figcaption>', options$fig.cap, '</figcaption></figure>',
+        sep = '')
+})
+
+fn = local({
+  i = 0
+  function(x) {
+    i <<- i + 1
+    paste('Figure ', i, ': ', x, sep = '')
+  }
+})
+# See yihui.name/knitr/options for more Knitr options.
+##### Put other setup R code here
+
+
+# end setup chunk
+```
+
+### 1.4. merging our data
+
+```{r global settings, tidy = FALSE, message = FALSE, results = 'hide'}
+### here's a rather handy way of loading all packages that you need
+### for your code to work in one go
+libs <- c('ggplot2', 'latticeExtra', 'gridExtra', 'MASS', 
+          'colorspace', 'plyr', 'Hmisc', 'scales')
+lapply(libs, require, character.only = T)
+```
+
+```{r load, tidy = FALSE, message = FALSE, results = 'asis'}
+### load the diamonds data set (comes with ggplot2)
+data(diamonds)
+
+ave_price_cut <- aggregate(diamonds$price, by = list(diamonds$cut), 
+                           FUN = mean)
+ave_n_cut_color <- aggregate(diamonds$price, 
+                             by = list(diamonds$cut,
+                                       diamonds$color), 
+                             FUN = length)
+names(ave_n_cut_color) <- c("cut", "color", "n")
+```
+
+Often enough we end up with multiple data sets on our hard drive that contain useful data for the same analysis. In this case we might want to amalgamate our data sets so that we have all the data in one set.   
+R provides a function called ```merge()``` that does just that
+
+```{r merge 2 dfs, tidy = FALSE}
+ave_n_cut_color_price <- merge(ave_n_cut_color, ave_price_cut, 
+                               by.x = "cut", by.y = "Group.1")
+ave_n_cut_color_price
+```
+
+As the variable names of our two data sets differ, we need to specifically provide the names for each by which the merging should be done (```by.x``` & ```by.y```). The default of ```merge()``` tries to find variable names which are identical.
+
+Note, in order to merge more that two data frames at a time, we need to call a powerful higher order function called ```Reduce()```. This is one mighty function for doing all sorts of things iteratively.
+
+```{r merge multiple dfs, tidy = FALSE}
+names(ave_price_cut) <- c("cut", "price")
+
+set.seed(12)
+
+df3 <- data.frame(cut = ave_price_cut$cut,
+                  var1 = rnorm(nrow(ave_price_cut), 10, 2),
+                  var2 = rnorm(nrow(ave_price_cut), 100, 20))
+
+ave_n_cut_color_price <- Reduce(function(...) merge(..., all=T), 
+                                list(ave_n_cut_color, 
+                                     ave_price_cut,
+                                     df3))
+ave_n_cut_color_price
+```
+
+Obviously, setting proper names would be the next step now...
+
+Ok, so now we have a few tools at hand to manipulate our data in a way that we should be able to produce some meaningful graphs which tell the story that we want to be heard, or better, seen...
+
+So, let's start plotting stuff

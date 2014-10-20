@@ -1,0 +1,114 @@
+```{r knitsetup, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+source('../../global_options.R')
+opts_knit$set(base.dir='./', out.format='md')
+opts_chunk$set(prompt=FALSE, comment='', results='markup', cache = cch, cache.path = '../../book_cache/', fig.path = '../../book_figures/', fig.align = 'center')
+
+
+knit_hooks$set(plot = function(x, options) {
+  paste('<figure><img src="',
+        opts_knit$get('base.url'), paste(x, collapse = '.'),
+        '"><figcaption>', options$fig.cap, '</figcaption></figure>',
+        sep = '')
+})
+
+fn = local({
+  i = 0
+  function(x) {
+    i <<- i + 1
+    paste('Figure ', i, ': ', x, sep = '')
+  }
+})
+# See yihui.name/knitr/options for more Knitr options.
+##### Put other setup R code here
+
+
+# end setup chunk
+```
+
+### 1.1. sub-setting our data
+
+As a final introductory note I would like to draw your attention to the fact that for the sake of reproducibility, this workshop will make use of the diamonds data set (which comes with ggplot2) in all the provided examples
+
+```{r global settings, tidy = FALSE, message = FALSE, results = 'hide'}
+### here's a rather handy way of loading all packages that you need
+### for your code to work in one go
+libs <- c('ggplot2', 'latticeExtra', 'gridExtra', 'MASS', 
+          'colorspace', 'plyr', 'Hmisc', 'scales')
+lapply(libs, require, character.only = T)
+
+### load the diamonds data set (comes with ggplot2)
+data(diamonds)
+```
+
+The diamonds data set is structured as follows
+
+```{r str, tidy = FALSE}
+str(diamonds)
+```
+
+The ```str()``` command is probably the most useful command in all of R. It shows the complete structure of our data set and provides a 'road map' of how to access certain parts of the data.   
+
+For example
+```
+diamonds$carat
+```
+is a numerical vector of length `r length(diamonds$carat)`
+
+and
+
+```
+diamonds$cut
+```
+
+is an ordered factor with the ordered levels `r levels(diamonds$cut)`
+
+Suppose we're a stingy person and don't want to spend too much money on the wedding ring for our loved one, we could create a data set only including diamonds that cost less than 1000 US$ (though 1000 US$ does still seem very generous to me).
+
+```{r subset cheap, tidy = FALSE}
+diamonds_cheap <- subset(diamonds, price < 1000)
+```
+
+Then our new data set would look like this
+
+```{r str subset cheap, tidy = FALSE}
+str(diamonds_cheap)
+```
+
+Now the new ```diamonds_cheap``` subset is a reduced data set of the original ```diamonds``` data set only having `r nrow(diamonds_cheap)` entries instead of the original `r nrow(diamonds)` entries.
+
+In case we were interested in a subset only including all diamonds of quality (cut) 'Premium' the command would be
+
+```{r subset premium, tidy = FALSE}
+diamonds_premium <- subset(diamonds, cut == "Premium")
+str(diamonds_premium)
+```
+
+Note the **two** equal signs in order to specify our selection (this stems from an effort to be consistent with selection criteria such as *smaller than* ```<=``` or *not equal* ```!=``` and basically translates to *is equal*)!!
+
+Any combinations of these subset commands are valid, e.g.
+
+```{r subset premium and cheap, tidy = FALSE}
+diamonds_premium_and_cheap <- subset(diamonds, cut == "Premium" & 
+                                   price <= 1000)
+```
+
+produces a rather strict subset only allowing diamonds of premium quality that cost less than 1000 US$
+
+In case we want **ANY** of these, meaning all diamonds of premium quality **OR** cheaper than 1000 US$, we would use the **|** operator to combine the two specifications
+
+```{r subset premium or cheap, tidy = FALSE}
+diamonds_premium_or_cheap <- subset(diamonds, cut == "Premium" | 
+                                   price <= 1000)
+```
+
+The **OR** specification is much less rigid than the **AND** specification which will result in a larger data set:
+
+* `diamonds_premium_and_cheap` has `r nrow(diamonds_premium_and_cheap)` rows, while
+* `diamonds_premium_or_cheap` has `r nrow(diamonds_premium_or_cheap)` rows
+
+```{r str comparison, tidy = FALSE}
+str(diamonds_premium_and_cheap)
+str(diamonds_premium_or_cheap)
+```
+
+There is, in principle, no limitation to the combination of these so-called Boolean operators (and, or, equal to, not equal to, greater than, less than). I guess you get the idea...

@@ -1,0 +1,90 @@
+```{r knitsetup, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+source('../../global_options.R')
+opts_knit$set(base.dir='./', out.format='md')
+opts_chunk$set(prompt=FALSE, comment='', results='markup', cache = cch, cache.path = '../../book_cache/', fig.path = '../../book_figures/', fig.align = 'center')
+
+
+knit_hooks$set(plot = function(x, options) {
+  paste('<figure><img src="',
+        opts_knit$get('base.url'), paste(x, collapse = '.'),
+        '"><figcaption>', options$fig.cap, '</figcaption></figure>',
+        sep = '')
+})
+
+fn = local({
+  i = 0
+  function(x) {
+    i <<- i + 1
+    paste('Figure ', i, ': ', x, sep = '')
+  }
+})
+# See yihui.name/knitr/options for more Knitr options.
+##### Put other setup R code here
+clrs_hcl <- function(n) {
+  hcl(h = seq(230, 0, length.out = n), 
+      c = 60, l = seq(10, 90, length.out = n), 
+      fixup = TRUE)
+  }
+
+dmod <- lm(price ~ cut, data = diamonds)
+cuts <- data.frame(cut = unique(diamonds$cut), 
+                   predict(dmod, data.frame(cut = unique(diamonds$cut)), 
+                           se = TRUE)[c("fit", "se.fit")])
+# end setup chunk
+```
+
+### 2.8. Plotting error bars (ggplot2 way)
+
+As mentioned above, when plotting error bars ```ggplot2``` is much easier. Whether this is because of the genereal ongoing discussion about the usefulness of these plots I do not want to judge.
+
+Anyway, plotting error bars in ```gglplot2``` is as easy as everything else...
+
+```{r gg err, tidy = FALSE, fig.cap = fn("a basic dotplot with error bars produced with ggplot2"), fig.align = 'center'}
+errbar_ggplot <- ggplot(cuts, aes(cut, fit, ymin = fit - se.fit, 
+                                  ymax=fit + se.fit))
+g_err <- errbar_ggplot + 
+  geom_pointrange() +
+  coord_flip() +
+  theme_classic()
+
+print(g_err)
+```
+
+Especially, when plotting them as part of a bar plot.
+
+```{r gg err bar, tidy = FALSE, fig.cap = fn("a ggplot2 bar plot with error bars"), fig.align = 'center'}
+g_err <- errbar_ggplot + 
+  geom_bar(fill = "grey80") +
+  geom_errorbar(width = 0.2) +
+  coord_flip() +
+  theme_classic()
+
+print(g_err)
+```
+
+Just as before (with the box wdths) though, applying this to each panel is a little more complicated...
+
+```{r gg facet err bar, tidy = FALSE, concordance = TRUE, fig.cap = fn("a ggplot2 panel bar plot with error bars and modified fill colours"), fig.align = 'center'}
+errbar_ggplot_facets <- ggplot(diamonds, aes(x = color, y = price))
+
+### function to calculate the standard error of the mean
+se <- function(x) sd(x)/sqrt(length(x))
+
+### function to be applied to each panel/facet
+myFun <- function(x) {
+  data.frame(ymin = mean(x) - se(x), 
+             ymax = mean(x) + se(x), 
+             y = mean(x))
+  }
+
+g_err_f <- errbar_ggplot_facets + 
+  stat_summary(fun.y = mean, geom = "bar", 
+               fill = clrs_hcl(7)) + 
+  stat_summary(fun.data = myFun, geom = "linerange") + 
+  facet_wrap(~ cut) +
+  theme_bw()
+
+print(g_err_f)
+```
+
+Still, trust me on this, much much easier than to achieve the same result in ```lattice```.
