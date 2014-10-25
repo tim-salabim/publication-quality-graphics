@@ -208,10 +208,6 @@ l_sc_smooth <- update(scatter_lattice, aspect = 1,
 print(l_sc_smooth)
 ```
 
-```
-(loaded the KernSmooth namespace)
-```
-
 <figure><img src="../../book_figures/latt smooth scat.png"><figcaption>Figure 6: a lattice panel plot showing the point density within each panel using the panel function smoothScatter()</figcaption></figure>
 
 This representation of our data basically adds another dimension to our plot which enables us to see that no matter what the quality of the diamond, most of the diamonds are actually of low carat and low price. Whether this is good or bad news, depends on your interpretation (and the size of your wallet, of course).

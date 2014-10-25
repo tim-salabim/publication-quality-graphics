@@ -55,13 +55,7 @@ g_bw <- bw_ggplot +
                                  outlier.size = 3,
                                  data = subset(diamonds, color == i))) +
   theme_bw()
-```
 
-```
-Error: could not find function "clrs_hcl"
-```
-
-```r
 print(g_bw)
 ```
 

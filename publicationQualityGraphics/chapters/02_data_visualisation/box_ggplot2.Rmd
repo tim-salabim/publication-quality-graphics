@@ -20,7 +20,11 @@ fn = local({
 })
 # See yihui.name/knitr/options for more Knitr options.
 ##### Put other setup R code here
-
+clrs_hcl <- function(n) {
+  hcl(h = seq(230, 0, length.out = n), 
+      c = 60, l = seq(10, 90, length.out = n), 
+      fixup = TRUE)
+  }
 
 
 # end setup chunk

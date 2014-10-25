@@ -7,10 +7,18 @@
 1. the `lattice/ggplot2` plot objects need to be printed using `print(latticeObject)/print(ggplot2Object)`
 2. we need to set `newpage = FALSE` in the print call so that the previously drawn elements are not deleted
 
-Let's try and plot the ```lattice``` and `ggplot2` versions of our box and whisker plots and scatter plots next to each other on one page by setting up a suitable viewport structure.
+Let's try and plot some ```lattice``` and `ggplot2` plots next to each other on one page by setting up a suitable viewport structure. First of all we obviously need to produce plots. We will produce very basic plots here, but this should work with whatever `lattice` or `ggplot2` object you have created earlier.
 
 
 ```r
+p1_lattice <- xyplot(price ~ carat, data = diamonds)
+p2_lattice <- histogram(~ price, data = diamonds)
+
+p1_ggplot <- ggplot(aes(x = carat, y = price), data = diamonds) +
+  geom_point()
+p2_ggplot <- ggplot(diamonds, aes(x = price)) +
+  geom_histogram()
+
 ### clear plot area
 grid.newpage()
 
@@ -27,14 +35,8 @@ pushViewport(vp1)
 grid.rect()
 
 ### plot a plot - needs to be printed (and newpage set to FALSE)!!!
-print(l_bw, newpage = FALSE)
-```
+print(p1_lattice, newpage = FALSE)
 
-```
-Error: object 'l_bw' not found
-```
-
-```r
 ### leave vp1 - up one level (into root vieport)
 upViewport(1)
 
@@ -51,14 +53,8 @@ pushViewport(vp2)
 grid.rect()
 
 ### plot another plot
-print(g_bw, newpage = FALSE)
-```
+print(p2_lattice, newpage = FALSE)
 
-```
-Error: object 'g_bw' not found
-```
-
-```r
 ### leave vp2
 upViewport(1)
 
@@ -73,14 +69,8 @@ pushViewport(vp3)
 ### show the plotting region (viewport extent)
 grid.rect()
 
-print(l_sc, newpage = FALSE)
-```
+print(p1_ggplot, newpage = FALSE)
 
-```
-Error: object 'l_sc' not found
-```
-
-```r
 upViewport(1)
 
 
@@ -94,14 +84,8 @@ pushViewport(vp4)
 ### show the plotting region (viewport extent)
 grid.rect()
 
-print(g_sc, newpage = FALSE)
-```
+print(p2_ggplot, newpage = FALSE)
 
-```
-Error: object 'g_sc' not found
-```
-
-```r
 upViewport(1)
 ```
 

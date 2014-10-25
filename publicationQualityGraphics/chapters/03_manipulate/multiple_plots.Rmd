@@ -27,6 +27,8 @@ clrs_hcl <- function(n) {
   }
 
 library(gridExtra)
+library(ggplot2)
+data(diamonds)
 # end setup chunk
 ```
 
@@ -37,9 +39,18 @@ library(gridExtra)
 1. the `lattice/ggplot2` plot objects need to be printed using `print(latticeObject)/print(ggplot2Object)`
 2. we need to set `newpage = FALSE` in the print call so that the previously drawn elements are not deleted
 
-Let's try and plot the ```lattice``` and `ggplot2` versions of our box and whisker plots and scatter plots next to each other on one page by setting up a suitable viewport structure.
+Let's try and plot some ```lattice``` and `ggplot2` plots next to each other on one page by setting up a suitable viewport structure. First of all we obviously need to produce plots. We will produce very basic plots here, but this should work with whatever `lattice` or `ggplot2` object you have created earlier.
 
-```{r grid multiple, tidy = FALSE, fig.cap = fn("using the grid package to place multiple plots on one page"), fig.align = 'center', fig.width = 10, fig.height = 10}
+```{r grid multiple, message = FALSE, tidy = FALSE, fig.cap = fn("using the grid package to place multiple plots on one page"), fig.align = 'center', fig.width = 10, fig.height = 10}
+
+p1_lattice <- xyplot(price ~ carat, data = diamonds)
+p2_lattice <- histogram(~ price, data = diamonds)
+
+p1_ggplot <- ggplot(aes(x = carat, y = price), data = diamonds) +
+  geom_point()
+p2_ggplot <- ggplot(diamonds, aes(x = price)) +
+  geom_histogram()
+
 ### clear plot area
 grid.newpage()
 
@@ -56,7 +67,7 @@ pushViewport(vp1)
 grid.rect()
 
 ### plot a plot - needs to be printed (and newpage set to FALSE)!!!
-print(l_bw, newpage = FALSE)
+print(p1_lattice, newpage = FALSE)
 
 ### leave vp1 - up one level (into root vieport)
 upViewport(1)
@@ -74,7 +85,7 @@ pushViewport(vp2)
 grid.rect()
 
 ### plot another plot
-print(g_bw, newpage = FALSE)
+print(p2_lattice, newpage = FALSE)
 
 ### leave vp2
 upViewport(1)
@@ -90,7 +101,7 @@ pushViewport(vp3)
 ### show the plotting region (viewport extent)
 grid.rect()
 
-print(l_sc, newpage = FALSE)
+print(p1_ggplot, newpage = FALSE)
 
 upViewport(1)
 
@@ -105,7 +116,7 @@ pushViewport(vp4)
 ### show the plotting region (viewport extent)
 grid.rect()
 
-print(g_sc, newpage = FALSE)
+print(p2_ggplot, newpage = FALSE)
 
 upViewport(1)
 ```
