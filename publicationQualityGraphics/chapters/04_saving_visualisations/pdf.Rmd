@@ -1,0 +1,62 @@
+```{r knitsetup, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+source('../../global_options.R')
+opts_knit$set(base.dir='./', out.format='md')
+opts_chunk$set(prompt=FALSE, comment='', results='markup', cache = cch, cache.path = '../../book_cache/', fig.path = '../../book_figures/', fig.align = 'center')
+
+
+knit_hooks$set(plot = function(x, options) {
+  paste('<figure><img src="',
+        opts_knit$get('base.url'), paste(x, collapse = '.'),
+        '"><figcaption>', options$fig.cap, '</figcaption></figure>',
+        sep = '')
+})
+
+fn = local({
+  i = 0
+  function(x) {
+    i <<- i + 1
+    paste('Figure ', i, ': ', x, sep = '')
+  }
+})
+# See yihui.name/knitr/options for more Knitr options.
+##### Put other setup R code here
+clrs_hcl <- function(n) {
+  hcl(h = seq(230, 0, length.out = n), 
+      c = 60, l = seq(10, 90, length.out = n), 
+      fixup = TRUE)
+  }
+
+library(gridExtra)
+library(ggplot2)
+data(diamonds)
+# end setup chunk
+```
+
+In all of the following chapters we will first create very basic `lattice` and `ggplot2` plot objects:
+
+```{r basic plots}
+p_lattice <- xyplot(price ~ carat, data = diamonds)
+p_ggplot <- ggplot(aes(x = carat, y = price), data = diamonds) +
+  geom_point() + 
+  theme_bw()
+```
+
+Ok, so we have our basic plot objects that we want to export as `tiff` images. Note that for graphics of points and lines it is usually preferred to export them using a vector graphics device (`eps` or `pdf`) but for the sake of demonstration, we will not care about this right now and export our scatter plot as `tiff` anyway (`eps` and `pdf` examples follow). In all the examples that follow, we will produce figures that are maximum width (17.35 cm) and maximum height (23.35 cm) accroding to PLOS ONE specifications. Furthermore, we will always first see how this is done with lattice, then with ggplot2.
+
+So, the first thing to do is open the `tiff` device:
+
+```{r open device pdf, message=FALSE, eval=FALSE}
+tiff("test.tif", width = 17.35, height = 23.35, units = "cm")
+```
+
+then, we render our plot object:
+
+```{r plot pdf, message=FALSE, eval=FALSE}
+print(p_lattice)
+```
+
+and finally we close our device:
+
+```{r close pdf, message=FALSE, eval=FALSE}
+invisible(dev.off()) # dev.off() is sufficient. Invisible suppresses text.
+```
