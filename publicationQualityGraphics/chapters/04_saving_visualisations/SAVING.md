@@ -2,7 +2,7 @@
 
 ## 4. Saving your visualisations
 
-Saving graphics in R is very straight forward. We simply need to call a suitable device. There are a number of different plotting devices available. Here, we will introduce 4 examples, `tiff`, `png`, `postscript` and `pdf`. `postscript` and `pdf` should be used for vector graphics (e.g. line plots, point plots, polygon plots etc.), whereas `tiff` and `png` are preferable for raster graphics (e.g. photos, our density scatter plot or anything pixel based).
+Saving graphics in R is, in theory, straight forward. We simply need to call a suitable device. There are a number of different plotting devices available. Here, we will introduce 4 examples, `tiff`, `png`, `postscript` and `pdf`. `postscript` and `pdf` should be used for vector graphics (e.g. line plots, point plots, polygon plots etc.), whereas `tiff` and `png` are preferable for raster graphics (e.g. photos, our density scatter plot or anything pixel based).
 
 All the graphics devices in R basically work the same way:
 
@@ -19,8 +19,6 @@ png("some_filename.png", width = 10, height = 10, units = "cm", res = 300)
 invisible(dev.off())
 ```
 
-<figure><img src="../../book_figures/device.png"><figcaption></figcaption></figure>
-
 Sounds rather easy, but as they say, the devil is in the details... Unfortunately, neither `lattice` nor `ggplot2` grpahics play very well with the respective graphics devices. Consider the following setting where we want to produce a `tiff` output with a resolution of 300 dpi, a width of 17.35 cm, a height of 23.35 cm, the font family "ArialMT" and a pointsize of 18.
 
 Insetad of saving a graph, however, we only check whether the pointsize of 18 is passed correctly to the respective plotting environment (i.e. `base graphics`, `lattice` and `ggplot2`).
@@ -35,7 +33,7 @@ par()$ps
 ```
 
 ```
-[1] 18
+## [1] 18
 ```
 
 ```r
@@ -44,7 +42,7 @@ trellis.par.get()$fontsize$text
 ```
 
 ```
-[1] 12
+## [1] 12
 ```
 
 ```r
@@ -53,15 +51,13 @@ theme_bw()$text$size
 ```
 
 ```
-[1] 12
+## [1] 12
 ```
 
 ```r
 # turn device off
 invisible(dev.off())
 ```
-
-<figure><img src="../../book_figures/graphical paramters tiff.png"><figcaption></figcaption></figure>
 
 We see that neither `lattice` nor `ggplot2` adhere to the specified pointsize whereas `base grpahics` do. Let's try this for the other devices too. First, `png`:
 
@@ -74,7 +70,7 @@ par()$ps
 ```
 
 ```
-[1] 18
+## [1] 18
 ```
 
 ```r
@@ -83,7 +79,7 @@ trellis.par.get()$fontsize$text
 ```
 
 ```
-[1] 12
+## [1] 12
 ```
 
 ```r
@@ -92,15 +88,13 @@ theme_bw()$text$size
 ```
 
 ```
-[1] 12
+## [1] 12
 ```
 
 ```r
 # turn device off
 invisible(dev.off())
 ```
-
-<figure><img src="../../book_figures/graphical paramters png.png"><figcaption></figcaption></figure>
 
 Similar to `tiff`. Now for `eps`:
 
@@ -113,7 +107,7 @@ par()$ps
 ```
 
 ```
-[1] 18
+## [1] 18
 ```
 
 ```r
@@ -122,7 +116,7 @@ trellis.par.get()$fontsize$text
 ```
 
 ```
-[1] 18
+## [1] 12
 ```
 
 ```r
@@ -131,15 +125,13 @@ theme_bw()$text$size
 ```
 
 ```
-[1] 12
+## [1] 12
 ```
 
 ```r
 # turn device off
 invisible(dev.off())
 ```
-
-<figure><img src="../../book_figures/graphical paramters eps.png"><figcaption></figcaption></figure>
 
 Aha! Here `lattice` all of a sudden adheres to the pointsize, `ggplot2` still ignores it.
 Finally, for `pdf`:
@@ -153,7 +145,7 @@ par()$ps
 ```
 
 ```
-[1] 18
+## [1] 18
 ```
 
 ```r
@@ -162,7 +154,7 @@ trellis.par.get()$fontsize$text
 ```
 
 ```
-[1] 12
+## [1] 12
 ```
 
 ```r
@@ -171,15 +163,13 @@ theme_bw()$text$size
 ```
 
 ```
-[1] 12
+## [1] 12
 ```
 
 ```r
 # turn device off
 invisible(dev.off())
 ```
-
-<figure><img src="../../book_figures/graphical paramters pdf.png"><figcaption></figcaption></figure>
 
 ... and we're back to square one with only `base graphics` really correctly setting the supplied fontsize.
 
@@ -201,9 +191,24 @@ In case of more rigid formatting guidelines, further rules may be imposed on:
 * file size
 * orientation
 
-to name a few. Here, we will focus on the first list.
+As an example, we will use the guidelines from PLOS ONE. An overview of these can be found [here](http://www.plosone.org/static/figureGuidelines#figures) and more details are listed [here](http://www.plosone.org/static/figureSpecifications). 
 
-As an example, we will use the guidelines from PLOS ONE. An overview of these can be found [here](http://www.plosone.org/static/figureGuidelines#figures) and more details are listed [here](http://www.plosone.org/static/figureSpecifications). Additionally, some general remarks on software related issues can be found [here](http://www.plosone.org/static/figureInstructions). From the latter I quote:
+For `tiff` images the requirements are as follows:
+
+* __width:__ 8.30 cm (one column images), 17.35 (two column images)
+* __maximum height:__ 23.35 cm (caption will not fit on the same page then)
+* __minimum resolution:__ 300 ppi
+* __compression:__ LZW
+* __color mode:__ RGB (millions of colors), 8 bits per channel
+* __background:__ white, not transparent
+* __layers:__ a single layer called "Background"
+* __text:__ font types Arial, Times or Symbol 6 - 12 pt
+* __lines:__ line width between 0.5 to 1.5 pt
+* __white space:__ a 2 pt white space around each figure is recommended
+* __file size:__ 10 MB max
+* __orientation:__ up to the author
+
+Additionally, some general remarks on software related issues can be found [here](http://www.plosone.org/static/figureInstructions). From the latter I quote:
 
 > Numerous programs can create figures but are not dedicated to working with graphics. These may be limited in their capability to create TIFFs or EPSs that comply with PLOS specifications. Such applications include ChemDraw, Haploview, PyMol, R, ImageMagick, Corel Draw, GeneSpring, Matlab, Origin, Prism, Sigmaplot, and Stata. To create a high-quality TIFF from images created in other applications, use the instructions below to convert to PDF and then to TIFF or EPS.
 

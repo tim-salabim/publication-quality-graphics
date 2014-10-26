@@ -143,6 +143,7 @@ grid.rect(gp = gpar(fill = "grey", alpha = 0.5))
 ```{r, include = FALSE}
 ## close the graphical device again
 opts_knit$set(global.device = FALSE)
+invisible(dev.off())
 ```
 
 I hope that you have understood 2 things now:
