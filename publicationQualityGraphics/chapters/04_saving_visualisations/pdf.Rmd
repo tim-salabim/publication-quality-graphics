@@ -40,4 +40,20 @@ p_ggplot <- ggplot(aes(x = carat, y = price), data = diamonds) +
   geom_point()
 ```
 
-to be filled...
+`pdf` basically works the same as `postscript`. Both produce vector graphics output. The default settings can be checked with:
+
+```{r pdfoptions}
+pdf.options()
+```
+
+However, there is no equivalent to `setEPS()`. Therefore, we need to provide all device specifications/changes of the default settings directly in the device setup:
+
+```{r setpdf line width}
+pdf("test_la_line.pdf", onefile = TRUE, bg = "white", 
+    family = "Times", width = 6.83)
+
+print(xyplot(1:10 ~ 1:10, type = "l", lwd = 96/72 * 2))
+
+invisible(dev.off())
+```
+

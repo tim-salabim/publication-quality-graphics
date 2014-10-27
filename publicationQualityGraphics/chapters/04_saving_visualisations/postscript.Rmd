@@ -94,6 +94,8 @@ print(xyplot(1:10 ~ 1:10, type = "l", lwd = 96/72 * 2))
 invisible(dev.off())
 ```
 
+Obviously, the line width adjustment can also be done globally in the theme setup.
+
 As a final tweak, we will see how to change the white space around a plot in `lattice`:
 
 ```{r seteps whitespace}
@@ -118,3 +120,15 @@ print(xyplot(1:10 ~ 1:10, type = "l", lwd = 96/72 * 2,
 
 This will, however, only really provide a 2 pt white space on the left side of the plot. I found some indications as to some bugs in setting these layout parameters, so whether this is intended or not remains unclear for now. I will keep digging and update this tutorial as soon as I find a proper solution.
 
+In `ggplot2` the margin adjustment can again be done using `theme_update()`:
+
+```{r change themes gg eps, message=FALSE, eval=TRUE}
+theme_set(theme_bw(base_size = 20))
+theme_update(plot.margin = unit(rep(2, 4), units = "points"))
+
+print(p_ggplot)
+```
+
+You might say that the approach taken by `ggplot2` regarding the margin adjustment is favourable as we don't need to provide the desired values to each entry of the `lattice.optios()`. There is, however, an equivalent function in `lattice` called `trellis.par.set()`.
+
+Personally, I like the assignment approach (`<-`) better as it usually involves a little more poking around in the various settings which means you are likely to understand things in a little more detail.

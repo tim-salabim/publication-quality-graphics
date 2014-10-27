@@ -24,3 +24,4 @@ This is the summary of my book.
     * [Portable Network Graphics (.png)](chapters/04_saving_visualisations/png.md)
     * [Postscript (.eps)](chapters/04_saving_visualisations/postscript.md)
     * [Portable Document Format (.pdf)](chapters/04_saving_visualisations/pdf.md)
+* [Final remarks](chapters/05_final_remarks/final_remarks.md)

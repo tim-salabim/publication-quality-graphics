@@ -26,7 +26,6 @@ clrs_hcl <- function(n) {
       fixup = TRUE)
   }
 
-
 # end setup chunk
 ```
 

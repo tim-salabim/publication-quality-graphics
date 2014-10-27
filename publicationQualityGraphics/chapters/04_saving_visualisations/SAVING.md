@@ -133,7 +133,6 @@ theme_bw()$text$size
 invisible(dev.off())
 ```
 
-Aha! Here `lattice` all of a sudden adheres to the pointsize, `ggplot2` still ignores it.
 Finally, for `pdf`:
 
 
@@ -171,7 +170,7 @@ theme_bw()$text$size
 invisible(dev.off())
 ```
 
-... and we're back to square one with only `base graphics` really correctly setting the supplied fontsize.
+... and we see that only `base graphics` really correctly sets the supplied fontsize.
 
 Alright, this was only a small exercise to highlight the fact, that it is not straight forward to get that fine control over grphics output in R. But before we dive into this deeper, we will first need to know what it is that we want to achive, meaning we need a precise definition of the guidlines our grpahics output should adhere to. Generally, academic journals provide formatting guidelines for both figures and tables. These, however, differ from journal to journal so that it is impossible to come up with a one-fits-all solution here. Therefore, we will pick one of these guides to highlight the process of achieving the desired formatting which can then be adapted to any other formatting guide. Even though this is in R terms not directly related to exporting visualisations through different devices, these finer controls will be covered her, as from an academic publishing point of view this is exactly the point where we need to start thinking about these formatting issues.
 
